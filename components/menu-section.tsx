@@ -3,10 +3,13 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { useCart } from "@/components/cart-provider"
 import { toast } from "@/hooks/use-toast"
+import { ToastAction } from "@/components/ui/toast"
+import { useRouter } from "next/navigation"
 
-const categories = ["All", "Breads", "Pastries", "Cakes", "Cookies"]
+const categories = ["All", "Cakes", "Pastries", "Cookies", "Breads"]
 
 const menuItems = [
   {
@@ -22,7 +25,7 @@ const menuItems = [
     name: "Multigrain Loaf",
     category: "Breads",
     description: "Hearty multigrain bread with seeds",
-    price: "₹540.00",
+    price: "₹440.00",
     image: "/multigrain-bread-loaf-with-seeds.jpg",
   },
   {
@@ -46,7 +49,7 @@ const menuItems = [
     name: "Focaccia Bread",
     category: "Breads",
     description: "Italian focaccia with rosemary and olive oil",
-    price: "₹520.00",
+    price: "₹420.00",
     image: "/focaccia-bread-rosemary-olive-oil.jpg",
   },
   {
@@ -198,7 +201,7 @@ const menuItems = [
     name: "Chocolate Cake",
     category: "Cakes",
     description: "Rich chocolate cake with ganache frosting",
-    price: "₹24.99",
+    price: "₹240.99",
     image: "/chocolate-layer-cake-with-ganache.jpg",
   },
   {
@@ -206,7 +209,7 @@ const menuItems = [
     name: "Red Velvet Cake",
     category: "Cakes",
     description: "Classic red velvet with cream cheese frosting",
-    price: "₹26.99",
+    price: "₹260.99",
     image: "/red-velvet-cake.png",
   },
   {
@@ -214,7 +217,7 @@ const menuItems = [
     name: "Vanilla Bean Cake",
     category: "Cakes",
     description: "Moist vanilla cake with Madagascar vanilla bean buttercream",
-    price: "₹23.99",
+    price: "₹230.99",
     image: "/vanilla-bean-cake-with-buttercream-frosting.jpg",
   },
   {
@@ -222,7 +225,7 @@ const menuItems = [
     name: "Lemon Drizzle Cake",
     category: "Cakes",
     description: "Zesty lemon cake with tangy lemon glaze",
-    price: "₹22.99",
+    price: "₹220.99",
     image: "/lemon-drizzle-cake-with-glaze.jpg",
   },
   {
@@ -302,7 +305,7 @@ const menuItems = [
     name: "Banana Cake",
     category: "Cakes",
     description: "Moist banana cake with cinnamon cream cheese frosting",
-    price: "₹24.99",
+    price: "₹240.99",
     image: "/banana-cake-with-cinnamon-cream-cheese-frosting.jpg",
   },
   {
@@ -326,6 +329,12 @@ const menuItems = [
 export function MenuSection() {
   const [selectedCategory, setSelectedCategory] = useState("All")
   const { addItem } = useCart()
+  const router = useRouter()
+  const [quantities, setQuantities] = useState<Record<number, number>>({})
+
+  const getQty = (id: number) => (quantities[id] ?? 1)
+  const setQty = (id: number, value: number) =>
+    setQuantities((prev) => ({ ...prev, [id]: Math.max(1, Math.min(99, Math.floor(value) || 1)) }))
 
   const filteredItems =
     selectedCategory === "All" ? menuItems : menuItems.filter((item) => item.category === selectedCategory)
@@ -375,10 +384,43 @@ export function MenuSection() {
                   <span className="text-lg font-bold text-accent">{item.price}</span>
                 </div>
                 <p className="text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
+                {/* Quantity selector */}
+                <div className="mb-4 flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setQty(item.id, getQty(item.id) - 1)}
+                    aria-label={`Decrease ${item.name} quantity`}
+                  >
+                    -
+                  </Button>
+                  <Input
+                    type="number"
+                    inputMode="numeric"
+                    min={1}
+                    max={99}
+                    value={getQty(item.id)}
+                    onChange={(e) => setQty(item.id, Number(e.target.value))}
+                    className="w-16 text-center"
+                    aria-label={`${item.name} quantity`}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setQty(item.id, getQty(item.id) + 1)}
+                    aria-label={`Increase ${item.name} quantity`}
+                  >
+                    +
+                  </Button>
+                </div>
+
                 <Button
                   className="w-full bg-primary hover:bg-primary/90"
                   onClick={() => {
                     const priceNumber = parseFloat(String(item.price).replace(/[^\d.]/g, "")) || 0
+                    const qty = getQty(item.id)
                     addItem(
                       {
                         id: item.id,
@@ -386,9 +428,19 @@ export function MenuSection() {
                         price: priceNumber,
                         image: item.image,
                       },
-                      1,
+                      qty,
                     )
-                    toast({ title: "Added to order", description: `${item.name} has been added to your cart.` })
+                    toast({
+                      title: "Added to order",
+                      description: `${qty} × ${item.name} added to your cart.`,
+                      action: (
+                        <ToastAction altText="View cart" onClick={() => router.push("/cart")}>
+                          View cart
+                        </ToastAction>
+                      ),
+                    })
+                    // reset to 1 after adding
+                    setQty(item.id, 1)
                   }}
                 >
                   Add to Order

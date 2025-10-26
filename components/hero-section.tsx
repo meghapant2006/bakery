@@ -37,9 +37,9 @@ export function HeroSection() {
 
       <div className="container mx-auto px-4 text-center relative z-10">
         <div className="max-w-5xl mx-auto animate-fade-in">
-          <h1 className="text-4xl md:text-6xl font-bold text-primary mb-8">
+          <h6 className="text-4xl md:text-6xl font-bold text-primary mb-8">
             Best bakery shop in Noida
-          </h1>
+          </h6>
         </div>
 
         <div className="mt-20 relative animate-slide-up">

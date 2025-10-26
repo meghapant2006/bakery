@@ -1,8 +1,8 @@
 ﻿"use client"
 
-import { useState, useEffect } from "react"
+import { useRef } from "react"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
 
 const featuredItems = [
   {
@@ -10,7 +10,7 @@ const featuredItems = [
     name: "Artisan Sourdough",
     description: "Our signature sourdough with a perfect crust and tangy flavor",
     image: "/artisan-sourdough-bread-with-golden-crust.jpg",
-    price: "₹680.00",
+    price: "₹280.00",
   },
   {
     id: 2,
@@ -21,29 +21,21 @@ const featuredItems = [
   },
   {
     id: 3,
-    name: "Chocolate Ã‰clairs",
-    description: "Classic Ã©clairs filled with vanilla cream and chocolate glaze",
+    name: "Chocolate Éclairs",
+    description: "Classic éclairs filled with vanilla cream and chocolate glaze",
     image: "/chocolate-eclairs-with-glossy-chocolate-glaze.jpg",
     price: "₹380.00",
   },
 ]
 
 export function FeaturedSection() {
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const rowRef = useRef<HTMLDivElement | null>(null)
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % featuredItems.length)
-    }, 5000)
-    return () => clearInterval(timer)
-  }, [])
-
-  const nextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % featuredItems.length)
-  }
-
-  const prevSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + featuredItems.length) % featuredItems.length)
+  const scrollByAmount = (direction: "prev" | "next") => {
+    const el = rowRef.current
+    if (!el) return
+    const amount = el.clientWidth < 640 ? 300 : 380
+    el.scrollBy({ left: direction === "next" ? amount : -amount, behavior: "smooth" })
   }
 
   return (
@@ -59,63 +51,56 @@ export function FeaturedSection() {
           </p>
         </div>
 
-        <div className="relative max-w-4xl mx-auto">
-          <div className="overflow-hidden rounded-2xl bg-card shadow-lg">
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-?{currentIndex * 100}%)` }}
-            >
-              {featuredItems.map((item) => (
-                <div key={item.id} className="w-full flex-shrink-0">
-                  <div className="grid md:grid-cols-2 gap-8 p-8">
-                    <div className="order-2 md:order-1 flex flex-col justify-center">
-                      <h3 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-4">{item.name}</h3>
-                      <p className="text-muted-foreground text-lg mb-6 leading-relaxed">{item.description}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold text-accent">{item.price}</span>
-                        <Button className="bg-primary hover:bg-primary/90">Add to Order</Button>
-                      </div>
-                    </div>
-                    <div className="order-1 md:order-2">
-                      <img
-                        src={item.image || "/placeholder.svg"}
-                        alt={item.name}
-                        className="w-full h-64 md:h-80 object-cover rounded-xl hover-lift"
-                      />
-                    </div>
-                  </div>
+        <div className="relative max-w-6xl mx-auto">
+          <div
+            ref={rowRef}
+            className="flex gap-6 overflow-x-auto scroll-smooth pb-2"
+            style={{ scrollSnapType: "x mandatory" as any }}
+          >
+            {featuredItems.map((item) => (
+              <Card
+                key={item.id}
+                className="hover-lift overflow-hidden flex-shrink-0"
+                style={{ scrollSnapAlign: "start", minWidth: "280px", width: "min(380px, 85vw)" }}
+              >
+                <div className="aspect-[4/3] overflow-hidden">
+                  <img
+                    src={item.image || "/placeholder.svg"}
+                    alt={item.name}
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  />
                 </div>
-              ))}
-            </div>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-serif font-bold text-foreground mb-2">{item.name}</h3>
+                  <p className="text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-lg font-bold text-accent">{item.price}</span>
+                    <Button className="bg-primary hover:bg-primary/90">Add to Order</Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
 
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm"
-            onClick={prevSlide}
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-background/80 backdrop-blur-sm"
-            onClick={nextSlide}
-          >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-
-          <div className="flex justify-center mt-6 space-x-2">
-            {featuredItems.map((_, index) => (
-              <button
-                key={index}
-                className={`w-3 h-3 rounded-full transition-colors ?{
-                  index === currentIndex ? "bg-primary" : "bg-border"
-                }`}
-                onClick={() => setCurrentIndex(index)}
-              />
-            ))}
+          <div className="hidden md:block">
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute left-0 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm"
+              onClick={() => scrollByAmount("prev")}
+              aria-label="Previous"
+            >
+              ‹
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="absolute right-0 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm"
+              onClick={() => scrollByAmount("next")}
+              aria-label="Next"
+            >
+              ›
+            </Button>
           </div>
         </div>
       </div>

@@ -6,9 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from "lucide-react"
 import { useCart } from "@/components/cart-provider"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function CartPage() {
-  const { items: cartItems, updateQuantity, removeItem } = useCart()
+  const { items: cartItems, updateQuantity, removeItem, clear } = useCart()
+  const [paymentMethod, setPaymentMethod] = useState<string>("cod")
+  const router = useRouter()
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   const tax = subtotal * 0.08 // 8% tax
@@ -108,8 +114,36 @@ export default function CartPage() {
                     <span>Total</span>
                     <span>₹{total.toFixed(2)}</span>
                   </div>
-                  <Button className="w-full mt-6" size="lg">
-                    Proceed to Checkout
+                  {/* Payment Options */}
+                  <div className="pt-4">
+                    <h4 className="font-semibold mb-2">Payment Method</h4>
+                    <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="grid gap-2">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="upi" id="pm-upi" />
+                        <Label htmlFor="pm-upi">UPI</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="card" id="pm-card" />
+                        <Label htmlFor="pm-card">Credit/Debit Card</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="cod" id="pm-cod" />
+                        <Label htmlFor="pm-cod">Cash on Delivery</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <Button
+                    className="w-full mt-6"
+                    size="lg"
+                    onClick={() => {
+                      if (cartItems.length === 0) return
+                      // Simulate checkout success
+                      clear()
+                      router.push("/order-success")
+                    }}
+                  >
+                    Proceed to Payment
                   </Button>
                   <a href="/">
                     <Button variant="outline" className="w-full">

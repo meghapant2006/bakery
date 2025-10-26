@@ -64,11 +64,11 @@ export function ContactSection() {
                   <div>
                     <h3 className="font-serif font-bold text-foreground mb-2">Location</h3>
                     <p className="text-muted-foreground text-sm leading-relaxed">
-                      123 Artisan Street
+                      Mayur Vihar, Phase-3
                       <br />
-                      Downtown District
+                      New Delhi
                       <br />
-                      Sweet City, SC 12345
+                      Noida City, 201309
                     </p>
                   </div>
                 </div>
@@ -80,9 +80,9 @@ export function ContactSection() {
                   <div>
                     <h3 className="font-serif font-bold text-foreground mb-2">Phone</h3>
                     <p className="text-muted-foreground text-sm">
-                      (555) 123-BAKE
+                      +91 98765-43210
                       <br />
-                      (555) 123-2253
+                      +91 98765-43211
                     </p>
                   </div>
                 </div>
@@ -108,9 +108,7 @@ export function ContactSection() {
                   <div>
                     <h3 className="font-serif font-bold text-foreground mb-2">Email</h3>
                     <p className="text-muted-foreground text-sm">
-                      hello@thesweetspot.com
-                      <br />
-                      orders@thesweetspot.com
+                      sweetspot05@gmail.com
                     </p>
                   </div>
                 </div>

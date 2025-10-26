@@ -6,11 +6,19 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Menu, X, ShoppingBag, Search, Heart, Cake, Wheat } from "lucide-react"
+import { useCart } from "@/components/cart-provider"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { useRouter } from "next/navigation"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const { items } = useCart()
+  const totalCount = items.reduce((sum, it) => sum + (it.quantity || 0), 0)
+  const subtotal = items.reduce((sum, it) => sum + (it.price * (it.quantity || 0)), 0)
+  const router = useRouter()
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
@@ -115,14 +123,55 @@ export function Header() {
             >
               <Search className="h-5 w-5" />
             </Button>
-            <a href="/cart">
-              <Button variant="ghost" size="icon" className="hidden md:flex hover-glow relative">
-                <ShoppingBag className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  3
-                </span>
-              </Button>
-            </a>
+            {/* Cart (sheet) */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="hover-glow relative">
+                  <ShoppingBag className="h-5 w-5" />
+                  {totalCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full min-w-5 h-5 px-1 flex items-center justify-center">
+                      {totalCount}
+                    </span>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-80 sm:w-96">
+                {items.length === 0 ? (
+                  <div className="py-10 text-sm text-muted-foreground">Your cart is empty.</div>
+                ) : (
+                  <>
+                    <ScrollArea className="h-[55vh] pr-3 mt-4">
+                      <div className="space-y-4">
+                        {items.map((item) => (
+                          <div key={item.id} className="flex items-center gap-3">
+                            {item.image ? (
+                              <img src={item.image} alt={item.name} className="w-14 h-14 rounded object-cover" />
+                            ) : (
+                              <div className="w-14 h-14 rounded bg-muted" />
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium truncate">{item.name}</div>
+                              <div className="text-xs text-muted-foreground">Qty {item.quantity}</div>
+                            </div>
+                            <div className="text-sm font-semibold whitespace-nowrap">₹{(item.price * (item.quantity || 0)).toFixed(2)}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                    <div className="mt-4 border-t pt-4 space-y-3">
+                      <div className="flex justify-between text-sm">
+                        <span>Subtotal</span>
+                        <span>₹{subtotal.toFixed(2)}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button variant="outline" onClick={() => router.push('/cart')}>View Cart</Button>
+                        <Button onClick={() => router.push('/cart')}>Checkout</Button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </SheetContent>
+            </Sheet>
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
