@@ -38,18 +38,20 @@ export function ContactSection() {
             />
           </div>
           <div className="relative group">
-            <img
-              src="/cozy-bakery-interior-seating.jpg"
-              alt="Cozy interior seating"
-              className="w-full h-32 object-cover rounded-lg shadow-md hover-lift group-hover:scale-105 transition-transform duration-300"
-            />
+            <div className="w-full h-32 bg-gradient-to-br from-amber-100 to-amber-200 rounded-lg shadow-md hover-lift group-hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-2xl mb-1">🪑</div>
+                <div className="text-xs font-semibold text-gray-700">Cozy Seating</div>
+              </div>
+            </div>
           </div>
           <div className="relative group">
-            <img
-              src="/fresh-pastries-display-window.jpg"
-              alt="Fresh pastries display"
-              className="w-full h-32 object-cover rounded-lg shadow-md hover-lift group-hover:scale-105 transition-transform duration-300"
-            />
+            <div className="w-full h-32 bg-gradient-to-br from-rose-100 to-rose-200 rounded-lg shadow-md hover-lift group-hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-2xl mb-1">🥐</div>
+                <div className="text-xs font-semibold text-gray-700">Fresh Display</div>
+              </div>
+            </div>
           </div>
         </div>
 

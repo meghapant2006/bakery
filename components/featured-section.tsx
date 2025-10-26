@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
@@ -10,21 +10,21 @@ const featuredItems = [
     name: "Artisan Sourdough",
     description: "Our signature sourdough with a perfect crust and tangy flavor",
     image: "/artisan-sourdough-bread-with-golden-crust.jpg",
-    price: "$8.50",
+    price: "₹680.00",
   },
   {
     id: 2,
     name: "French Croissants",
     description: "Buttery, flaky croissants baked fresh every morning",
     image: "/golden-french-croissants-on-wooden-board.jpg",
-    price: "$3.25",
+    price: "₹260.00",
   },
   {
     id: 3,
-    name: "Chocolate Éclairs",
-    description: "Classic éclairs filled with vanilla cream and chocolate glaze",
+    name: "Chocolate Ã‰clairs",
+    description: "Classic Ã©clairs filled with vanilla cream and chocolate glaze",
     image: "/chocolate-eclairs-with-glossy-chocolate-glaze.jpg",
-    price: "$4.75",
+    price: "₹380.00",
   },
 ]
 
@@ -63,7 +63,7 @@ export function FeaturedSection() {
           <div className="overflow-hidden rounded-2xl bg-card shadow-lg">
             <div
               className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+              style={{ transform: `translateX(-?{currentIndex * 100}%)` }}
             >
               {featuredItems.map((item) => (
                 <div key={item.id} className="w-full flex-shrink-0">
@@ -110,7 +110,7 @@ export function FeaturedSection() {
             {featuredItems.map((_, index) => (
               <button
                 key={index}
-                className={`w-3 h-3 rounded-full transition-colors ${
+                className={`w-3 h-3 rounded-full transition-colors ?{
                   index === currentIndex ? "bg-primary" : "bg-border"
                 }`}
                 onClick={() => setCurrentIndex(index)}
@@ -122,3 +122,4 @@ export function FeaturedSection() {
     </section>
   )
 }
+

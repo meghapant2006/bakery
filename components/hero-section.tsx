@@ -37,47 +37,9 @@ export function HeroSection() {
 
       <div className="container mx-auto px-4 text-center relative z-10">
         <div className="max-w-5xl mx-auto animate-fade-in">
-          <div className="flex justify-center items-center gap-6 mb-8 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Star className="h-4 w-4 text-accent fill-current" />
-              <span>4.9/5 Rating</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Award className="h-4 w-4 text-accent" />
-              <span>Award Winning</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4 text-accent" />
-              <span>Fresh Daily</span>
-            </div>
-          </div>
-
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-foreground mb-8 text-balance leading-tight">
-            <span className="gradient-text">Artisan</span> baked goods meets{" "}
-            <span className="gradient-text">exquisite</span> taste
+          <h1 className="text-4xl md:text-6xl font-bold text-primary mb-8">
+            Best bakery shop in Noida
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto text-balance leading-relaxed">
-            Transform your daily moments into delicious memories with The Sweet Spot's handcrafted breads, pastries, and
-            custom creations made with love and the finest ingredients.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-            <Button
-              size="lg"
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 text-xl rounded-full shadow-xl hover-lift"
-              onClick={scrollToMenu}
-            >
-              Explore Our Menu
-              <ArrowRight className="ml-3 h-6 w-6" />
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="px-10 py-4 text-xl border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent rounded-full shadow-lg hover-lift"
-              onClick={scrollToCustomOrders}
-            >
-              Custom Orders
-            </Button>
-          </div>
         </div>
 
         <div className="mt-20 relative animate-slide-up">
@@ -120,29 +82,24 @@ export function HeroSection() {
             </div>
           </div>
 
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent rounded-3xl z-10"></div>
-            <img
-              src="/artisan-bakery-interior-with-fresh-bread-and-pastr.jpg"
-              alt="The Sweet Spot bakery interior showcasing fresh artisan breads and pastries"
-              className="w-full max-w-5xl mx-auto rounded-3xl shadow-2xl hover-lift border-4 border-white/50"
-            />
-            <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-sm rounded-2xl p-6 z-20 animate-bounce-gentle">
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-primary">50+</div>
-                  <div className="text-sm text-muted-foreground">Daily Varieties</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-primary">15</div>
-                  <div className="text-sm text-muted-foreground">Years Experience</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-primary">1000+</div>
-                  <div className="text-sm text-muted-foreground">Happy Customers</div>
-                </div>
-              </div>
-            </div>
+          {/* Action Buttons Below Images */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mt-12">
+            <Button
+              size="lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 text-xl rounded-full shadow-xl hover-lift"
+              onClick={scrollToMenu}
+            >
+              Explore Our Menu
+              <ArrowRight className="ml-3 h-6 w-6" />
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="px-10 py-4 text-xl border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground bg-transparent rounded-full shadow-lg hover-lift"
+              onClick={scrollToCustomOrders}
+            >
+              Custom Orders
+            </Button>
           </div>
         </div>
       </div>

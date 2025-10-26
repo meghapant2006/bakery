@@ -115,12 +115,14 @@ export function Header() {
             >
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="hidden md:flex hover-glow relative">
-              <ShoppingBag className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                3
-              </span>
-            </Button>
+            <a href="/cart">
+              <Button variant="ghost" size="icon" className="hidden md:flex hover-glow relative">
+                <ShoppingBag className="h-5 w-5" />
+                <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  3
+                </span>
+              </Button>
+            </a>
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
@@ -165,7 +167,7 @@ export function Header() {
                 onClick={() => scrollToSection("custom-orders")}
                 className="text-left text-muted-foreground hover:text-primary transition-colors font-medium py-2"
               >
-                🎂 Custom Orders
+                🎂 Orders
               </button>
               <button
                 onClick={() => scrollToSection("contact")}

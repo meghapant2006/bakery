@@ -63,24 +63,24 @@ export function CustomOrderSection() {
             </div>
           </div>
           <div className="relative group">
-            <img
-              src="/birthday-celebration-cake-colorful.jpg"
-              alt="Colorful birthday cake"
-              className="w-full h-48 object-cover rounded-xl shadow-lg hover-lift group-hover:scale-105 transition-transform duration-300"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl"></div>
+            <div className="w-full h-48 bg-gradient-to-br from-pink-100 to-pink-200 rounded-xl shadow-lg hover-lift group-hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-4xl mb-2">🎂</div>
+                <div className="text-lg font-semibold text-gray-700">Birthday Cakes</div>
+              </div>
+            </div>
             <div className="absolute bottom-4 left-4 text-white">
               <h3 className="text-lg font-semibold">Birthday Cakes</h3>
               <p className="text-sm opacity-90">Fun & Festive</p>
             </div>
           </div>
           <div className="relative group">
-            <img
-              src="/corporate-dessert-platter.jpg"
-              alt="Corporate dessert platter"
-              className="w-full h-48 object-cover rounded-xl shadow-lg hover-lift group-hover:scale-105 transition-transform duration-300"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl"></div>
+            <div className="w-full h-48 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl shadow-lg hover-lift group-hover:scale-105 transition-transform duration-300 flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-4xl mb-2">🍽️</div>
+                <div className="text-lg font-semibold text-gray-700">Corporate Orders</div>
+              </div>
+            </div>
             <div className="absolute bottom-4 left-4 text-white">
               <h3 className="text-lg font-semibold">Corporate Orders</h3>
               <p className="text-sm opacity-90">Professional & Delicious</p>

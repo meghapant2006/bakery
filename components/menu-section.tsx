@@ -1,8 +1,10 @@
-"use client"
+﻿"use client"
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { useCart } from "@/components/cart-provider"
+import { toast } from "@/hooks/use-toast"
 
 const categories = ["All", "Breads", "Pastries", "Cakes", "Cookies"]
 
@@ -12,7 +14,7 @@ const menuItems = [
     name: "Classic Baguette",
     category: "Breads",
     description: "Traditional French baguette with crispy crust",
-    price: "$4.50",
+    price: "₹360.00",
     image: "/french-baguette-bread-golden-crust.jpg",
   },
   {
@@ -20,7 +22,7 @@ const menuItems = [
     name: "Multigrain Loaf",
     category: "Breads",
     description: "Hearty multigrain bread with seeds",
-    price: "$6.75",
+    price: "₹540.00",
     image: "/multigrain-bread-loaf-with-seeds.jpg",
   },
   {
@@ -28,7 +30,7 @@ const menuItems = [
     name: "Sourdough Bread",
     category: "Breads",
     description: "Artisan sourdough with tangy flavor and chewy texture",
-    price: "$7.25",
+    price: "₹580.00",
     image: "/artisan-sourdough-bread-rustic.jpg",
   },
   {
@@ -36,7 +38,7 @@ const menuItems = [
     name: "Whole Wheat Bread",
     category: "Breads",
     description: "Nutritious whole wheat bread with honey",
-    price: "$5.75",
+    price: "₹460.00",
     image: "/whole-wheat-bread-honey-glazed.jpg",
   },
   {
@@ -44,7 +46,7 @@ const menuItems = [
     name: "Focaccia Bread",
     category: "Breads",
     description: "Italian focaccia with rosemary and olive oil",
-    price: "$6.50",
+    price: "₹520.00",
     image: "/focaccia-bread-rosemary-olive-oil.jpg",
   },
   {
@@ -52,7 +54,7 @@ const menuItems = [
     name: "Ciabatta Bread",
     category: "Breads",
     description: "Traditional Italian ciabatta with airy texture",
-    price: "$5.25",
+    price: "₹420.00",
     image: "/ciabatta-bread-italian-style.jpg",
   },
   {
@@ -60,7 +62,7 @@ const menuItems = [
     name: "Rye Bread",
     category: "Breads",
     description: "Dense rye bread with caraway seeds",
-    price: "$6.25",
+    price: "₹500.00",
     image: "/rye-bread-caraway-seeds.jpg",
   },
   {
@@ -68,7 +70,7 @@ const menuItems = [
     name: "Almond Croissant",
     category: "Pastries",
     description: "Buttery croissant filled with almond cream",
-    price: "$4.25",
+    price: "₹340.00",
     image: "/almond-croissant-with-sliced-almonds.jpg",
   },
   {
@@ -76,7 +78,7 @@ const menuItems = [
     name: "Fruit Tart",
     category: "Pastries",
     description: "Fresh seasonal fruit on pastry cream",
-    price: "$5.50",
+    price: "₹440.00",
     image: "/fresh-fruit-tart-with-berries.jpg",
   },
   {
@@ -84,7 +86,7 @@ const menuItems = [
     name: "Pain au Chocolat",
     category: "Pastries",
     description: "Flaky pastry with dark chocolate filling",
-    price: "$3.75",
+    price: "₹300.00",
     image: "/pain-au-chocolat-flaky-pastry.jpg",
   },
   {
@@ -92,15 +94,15 @@ const menuItems = [
     name: "Danish Pastry",
     category: "Pastries",
     description: "Buttery Danish with cream cheese and berries",
-    price: "$4.50",
+    price: "₹360.00",
     image: "/danish-pastry-cream-cheese-berries.jpg",
   },
   {
     id: 29,
-    name: "Éclair",
+    name: "Ã‰clair",
     category: "Pastries",
     description: "Choux pastry filled with vanilla cream and chocolate glaze",
-    price: "$4.75",
+    price: "₹380.00",
     image: "/chocolate-eclair-vanilla-cream.jpg",
   },
   {
@@ -108,7 +110,7 @@ const menuItems = [
     name: "Profiterole",
     category: "Pastries",
     description: "Light choux pastry with whipped cream and chocolate sauce",
-    price: "$3.25",
+    price: "₹260.00",
     image: "/profiteroles-whipped-cream-chocolate.jpg",
   },
   {
@@ -116,7 +118,7 @@ const menuItems = [
     name: "Apple Turnover",
     category: "Pastries",
     description: "Flaky pastry with spiced apple filling",
-    price: "$3.95",
+    price: "₹316.00",
     image: "/apple-turnover-flaky-pastry.jpg",
   },
   {
@@ -124,7 +126,7 @@ const menuItems = [
     name: "Cinnamon Roll",
     category: "Pastries",
     description: "Soft roll with cinnamon sugar and cream cheese glaze",
-    price: "$4.25",
+    price: "₹340.00",
     image: "/cinnamon-roll-cream-cheese-glaze.jpg",
   },
   {
@@ -132,7 +134,7 @@ const menuItems = [
     name: "Oatmeal Cookies",
     category: "Cookies",
     description: "Chewy oatmeal cookies with raisins",
-    price: "$2.75",
+    price: "₹220.00",
     image: "/oatmeal-raisin-cookies-on-plate.jpg",
   },
   {
@@ -140,7 +142,7 @@ const menuItems = [
     name: "Chocolate Chip Cookies",
     category: "Cookies",
     description: "Classic cookies with premium chocolate chips",
-    price: "$2.50",
+    price: "₹200.00",
     image: "/chocolate-chip-cookies-fresh-baked.jpg",
   },
   {
@@ -148,7 +150,7 @@ const menuItems = [
     name: "Sugar Cookies",
     category: "Cookies",
     description: "Soft sugar cookies with vanilla icing",
-    price: "$2.25",
+    price: "₹180.00",
     image: "/sugar-cookies-vanilla-icing.jpg",
   },
   {
@@ -156,7 +158,7 @@ const menuItems = [
     name: "Snickerdoodles",
     category: "Cookies",
     description: "Cinnamon sugar cookies with soft centers",
-    price: "$2.75",
+    price: "₹220.00",
     image: "/snickerdoodle-cookies-cinnamon-sugar.jpg",
   },
   {
@@ -164,7 +166,7 @@ const menuItems = [
     name: "Peanut Butter Cookies",
     category: "Cookies",
     description: "Rich peanut butter cookies with crosshatch pattern",
-    price: "$2.95",
+    price: "₹236.00",
     image: "/peanut-butter-cookies-crosshatch.jpg",
   },
   {
@@ -172,7 +174,7 @@ const menuItems = [
     name: "Double Chocolate Cookies",
     category: "Cookies",
     description: "Fudgy chocolate cookies with chocolate chunks",
-    price: "$3.25",
+    price: "₹260.00",
     image: "/double-chocolate-cookies-fudgy.jpg",
   },
   {
@@ -180,7 +182,7 @@ const menuItems = [
     name: "Gingerbread Cookies",
     category: "Cookies",
     description: "Spiced gingerbread cookies with royal icing",
-    price: "$3.50",
+    price: "₹280.00",
     image: "/gingerbread-cookies-royal-icing.jpg",
   },
   {
@@ -188,7 +190,7 @@ const menuItems = [
     name: "Shortbread Cookies",
     category: "Cookies",
     description: "Buttery Scottish shortbread cookies",
-    price: "$2.95",
+    price: "₹236.00",
     image: "/shortbread-cookies-buttery-scottish.jpg",
   },
   {
@@ -196,7 +198,7 @@ const menuItems = [
     name: "Chocolate Cake",
     category: "Cakes",
     description: "Rich chocolate cake with ganache frosting",
-    price: "$24.99",
+    price: "₹24.99",
     image: "/chocolate-layer-cake-with-ganache.jpg",
   },
   {
@@ -204,7 +206,7 @@ const menuItems = [
     name: "Red Velvet Cake",
     category: "Cakes",
     description: "Classic red velvet with cream cheese frosting",
-    price: "$26.99",
+    price: "₹26.99",
     image: "/red-velvet-cake.png",
   },
   {
@@ -212,7 +214,7 @@ const menuItems = [
     name: "Vanilla Bean Cake",
     category: "Cakes",
     description: "Moist vanilla cake with Madagascar vanilla bean buttercream",
-    price: "$23.99",
+    price: "₹23.99",
     image: "/vanilla-bean-cake-with-buttercream-frosting.jpg",
   },
   {
@@ -220,7 +222,7 @@ const menuItems = [
     name: "Lemon Drizzle Cake",
     category: "Cakes",
     description: "Zesty lemon cake with tangy lemon glaze",
-    price: "$22.99",
+    price: "₹22.99",
     image: "/lemon-drizzle-cake-with-glaze.jpg",
   },
   {
@@ -228,7 +230,7 @@ const menuItems = [
     name: "Carrot Cake",
     category: "Cakes",
     description: "Spiced carrot cake with walnuts and cream cheese frosting",
-    price: "$25.99",
+    price: "₹25.99",
     image: "/carrot-cake-with-cream-cheese-frosting-and-walnuts.jpg",
   },
   {
@@ -236,7 +238,7 @@ const menuItems = [
     name: "Black Forest Cake",
     category: "Cakes",
     description: "Chocolate sponge with cherries and whipped cream",
-    price: "$28.99",
+    price: "₹28.99",
     image: "/black-forest-cake-with-cherries-and-cream.jpg",
   },
   {
@@ -244,7 +246,7 @@ const menuItems = [
     name: "Strawberry Shortcake",
     category: "Cakes",
     description: "Light sponge with fresh strawberries and whipped cream",
-    price: "$24.99",
+    price: "₹24.99",
     image: "/strawberry-shortcake-with-fresh-berries.jpg",
   },
   {
@@ -252,7 +254,7 @@ const menuItems = [
     name: "Tiramisu Cake",
     category: "Cakes",
     description: "Coffee-soaked layers with mascarpone and cocoa",
-    price: "$27.99",
+    price: "₹27.99",
     image: "/tiramisu-cake-with-mascarpone-and-cocoa.jpg",
   },
   {
@@ -260,7 +262,7 @@ const menuItems = [
     name: "Coconut Cake",
     category: "Cakes",
     description: "Tropical coconut cake with coconut cream frosting",
-    price: "$25.99",
+    price: "₹25.99",
     image: "/coconut-cake-with-coconut-flakes-and-cream-frostin.jpg",
   },
   {
@@ -268,7 +270,7 @@ const menuItems = [
     name: "Funfetti Birthday Cake",
     category: "Cakes",
     description: "Colorful sprinkle cake with vanilla buttercream",
-    price: "$23.99",
+    price: "₹23.99",
     image: "/funfetti-birthday-cake-with-colorful-sprinkles.jpg",
   },
   {
@@ -276,7 +278,7 @@ const menuItems = [
     name: "German Chocolate Cake",
     category: "Cakes",
     description: "Rich chocolate cake with coconut pecan frosting",
-    price: "$26.99",
+    price: "₹26.99",
     image: "/german-chocolate-cake-with-coconut-pecan-frosting.jpg",
   },
   {
@@ -284,7 +286,7 @@ const menuItems = [
     name: "Cheesecake",
     category: "Cakes",
     description: "New York style cheesecake with graham cracker crust",
-    price: "$21.99",
+    price: "₹21.99",
     image: "/new-york-cheesecake-with-graham-cracker-crust.jpg",
   },
   {
@@ -292,7 +294,7 @@ const menuItems = [
     name: "Chocolate Raspberry Cake",
     category: "Cakes",
     description: "Decadent chocolate cake with fresh raspberry filling",
-    price: "$29.99",
+    price: "₹29.99",
     image: "/chocolate-raspberry-cake-with-fresh-berries.jpg",
   },
   {
@@ -300,7 +302,7 @@ const menuItems = [
     name: "Banana Cake",
     category: "Cakes",
     description: "Moist banana cake with cinnamon cream cheese frosting",
-    price: "$24.99",
+    price: "₹24.99",
     image: "/banana-cake-with-cinnamon-cream-cheese-frosting.jpg",
   },
   {
@@ -308,7 +310,7 @@ const menuItems = [
     name: "Opera Cake",
     category: "Cakes",
     description: "French almond sponge with chocolate ganache and gold leaf",
-    price: "$32.99",
+    price: "₹32.99",
     image: "/opera-cake-with-chocolate-ganache-and-gold-leaf.jpg",
   },
   {
@@ -316,13 +318,14 @@ const menuItems = [
     name: "Pineapple Upside Down Cake",
     category: "Cakes",
     description: "Caramelized pineapple with tender vanilla cake",
-    price: "$23.99",
+    price: "₹23.99",
     image: "/pineapple-upside-down-cake-with-caramelized-fruit.jpg",
   },
 ]
 
 export function MenuSection() {
   const [selectedCategory, setSelectedCategory] = useState("All")
+  const { addItem } = useCart()
 
   const filteredItems =
     selectedCategory === "All" ? menuItems : menuItems.filter((item) => item.category === selectedCategory)
@@ -372,7 +375,24 @@ export function MenuSection() {
                   <span className="text-lg font-bold text-accent">{item.price}</span>
                 </div>
                 <p className="text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
-                <Button className="w-full bg-primary hover:bg-primary/90">Add to Order</Button>
+                <Button
+                  className="w-full bg-primary hover:bg-primary/90"
+                  onClick={() => {
+                    const priceNumber = parseFloat(String(item.price).replace(/[^\d.]/g, "")) || 0
+                    addItem(
+                      {
+                        id: item.id,
+                        name: item.name,
+                        price: priceNumber,
+                        image: item.image,
+                      },
+                      1,
+                    )
+                    toast({ title: "Added to order", description: `${item.name} has been added to your cart.` })
+                  }}
+                >
+                  Add to Order
+                </Button>
               </CardContent>
             </Card>
           ))}
@@ -381,3 +401,8 @@ export function MenuSection() {
     </section>
   )
 }
+
+
+
+
+

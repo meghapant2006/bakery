@@ -13,7 +13,7 @@ export function Footer() {
               <span className="text-xl font-serif font-bold">The Sweet Spot</span>
             </div>
             <p className="text-primary-foreground/80 leading-relaxed max-w-md">
-              Crafting artisan baked goods with passion and tradition since 2010. Every bite tells a story of quality
+              Crafting artisan baked goods with passion and tradition since 2007. Every bite tells a story of quality
               ingredients and time-honored techniques.
             </p>
             <div className="flex space-x-4 mt-6">
@@ -44,7 +44,7 @@ export function Footer() {
               </li>
               <li>
                 <a href="#custom-orders" className="hover:text-accent transition-colors">
-                  Custom Orders
+                  Orders
                 </a>
               </li>
               <li>
@@ -58,17 +58,16 @@ export function Footer() {
           <div>
             <h3 className="font-serif font-bold mb-4">Contact Info</h3>
             <ul className="space-y-2 text-primary-foreground/80 text-sm">
-              <li>123 Artisan Street</li>
-              <li>Sweet City, SC 12345</li>
-              <li>(555) 123-BAKE</li>
-              <li>hello@thesweetspot.com</li>
+              <li>phase-3 ,Mayur Vihar</li>
+              <li>Noida City,  201309</li>
+              <li>thebakery2007@gmail.com</li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center">
           <p className="text-primary-foreground/60 text-sm">
-            © 2025 The Sweet Spot. All rights reserved. Made with ❤️ and flour.
+            © 2025 The Sweet Spot. All rights reserved..
           </p>
         </div>
       </div>
