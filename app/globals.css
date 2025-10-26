@@ -1,0 +1,304 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Updated color palette for warm bakery aesthetic */
+  --background: #faf9f7;
+  --foreground: #2d1810;
+  --card: #ffffff;
+  --card-foreground: #2d1810;
+  --popover: #ffffff;
+  --popover-foreground: #2d1810;
+  --primary: #8b4513;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5dc;
+  --secondary-foreground: #2d1810;
+  --muted: #f0ede8;
+  --muted-foreground: #6b5b4f;
+  --accent: #daa520;
+  --accent-foreground: #2d1810;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #e5e1db;
+  --input: #ffffff;
+  --ring: #8b4513;
+  --chart-1: #8b4513;
+  --chart-2: #daa520;
+  --chart-3: #cd853f;
+  --chart-4: #d2b48c;
+  --chart-5: #f5deb3;
+  --radius: 0.75rem;
+  --sidebar: #faf9f7;
+  --sidebar-foreground: #2d1810;
+  --sidebar-primary: #8b4513;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f5f5dc;
+  --sidebar-accent-foreground: #2d1810;
+  --sidebar-border: #e5e1db;
+  --sidebar-ring: #8b4513;
+}
+
+.dark {
+  --background: #1a1410;
+  --foreground: #f5f5dc;
+  --card: #2d1810;
+  --card-foreground: #f5f5dc;
+  --popover: #2d1810;
+  --popover-foreground: #f5f5dc;
+  --primary: #daa520;
+  --primary-foreground: #1a1410;
+  --secondary: #3d2f20;
+  --secondary-foreground: #f5f5dc;
+  --muted: #3d2f20;
+  --muted-foreground: #a89584;
+  --accent: #cd853f;
+  --accent-foreground: #1a1410;
+  --destructive: #dc2626;
+  --destructive-foreground: #f5f5dc;
+  --border: #3d2f20;
+  --input: #3d2f20;
+  --ring: #daa520;
+  --sidebar: #1a1410;
+  --sidebar-foreground: #f5f5dc;
+  --sidebar-primary: #daa520;
+  --sidebar-primary-foreground: #1a1410;
+  --sidebar-accent: #3d2f20;
+  --sidebar-accent-foreground: #f5f5dc;
+  --sidebar-border: #3d2f20;
+  --sidebar-ring: #daa520;
+}
+
+@theme inline {
+  --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+body {
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Enhanced gradient with warm bakery colors */
+.hero-gradient {
+  background: linear-gradient(135deg, #faf9f7 0%, #f5f5dc 25%, #f0ede8 50%, #e8ddd4 100%);
+  position: relative;
+}
+
+.hero-gradient::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 20%, rgba(218, 165, 32, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(139, 69, 19, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Added bakery-themed decorative elements */
+.bakery-pattern {
+  background-image: radial-gradient(circle at 25% 25%, rgba(218, 165, 32, 0.1) 2px, transparent 2px),
+    radial-gradient(circle at 75% 75%, rgba(139, 69, 19, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px, 40px 40px;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Enhanced animations with bakery theme */
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+.animate-bounce-gentle {
+  animation: bounceGentle 2s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceGentle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Enhanced hover effects */
+.hover-lift {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(139, 69, 19, 0.2), 0 10px 20px rgba(218, 165, 32, 0.1);
+}
+
+.hover-glow {
+  transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 20px rgba(218, 165, 32, 0.3), 0 0 40px rgba(139, 69, 19, 0.1);
+  transform: scale(1.05);
+}
+
+/* Added search input styling */
+.search-input {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+  background: rgba(255, 255, 255, 1);
+}
+
+/* Added floating elements animation */
+.floating {
+  animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Added gradient text effect */
+.gradient-text {
+  background: linear-gradient(135deg, #8b4513 0%, #daa520 50%, #cd853f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Enhanced gradient text with more sophisticated styling */
+.gradient-text-enhanced {
+  background: linear-gradient(135deg, 
+    #8b4513 0%, 
+    #daa520 40%, 
+    #cd853f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0.5px 0.5px 1px rgba(139, 69, 19, 0.2));
+  letter-spacing: 0.25px;
+}
+
+/* Additional logo enhancements */
+.logo-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.logo-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Mobile responsive logo adjustments */
+@media (max-width: 640px) {
+  .gradient-text-enhanced {
+    font-size: 1.5rem !important;
+    letter-spacing: 0.25px;
+  }
+}
