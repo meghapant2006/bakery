@@ -1,6 +1,5 @@
 ﻿"use client"
 
-import { useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
@@ -29,15 +28,6 @@ const featuredItems = [
 ]
 
 export function FeaturedSection() {
-  const rowRef = useRef<HTMLDivElement | null>(null)
-
-  const scrollByAmount = (direction: "prev" | "next") => {
-    const el = rowRef.current
-    if (!el) return
-    const amount = el.clientWidth < 640 ? 300 : 380
-    el.scrollBy({ left: direction === "next" ? amount : -amount, behavior: "smooth" })
-  }
-
   return (
     <section className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -51,57 +41,27 @@ export function FeaturedSection() {
           </p>
         </div>
 
-        <div className="relative max-w-6xl mx-auto">
-          <div
-            ref={rowRef}
-            className="flex gap-6 overflow-x-auto scroll-smooth pb-2"
-            style={{ scrollSnapType: "x mandatory" as any }}
-          >
-            {featuredItems.map((item) => (
-              <Card
-                key={item.id}
-                className="hover-lift overflow-hidden flex-shrink-0"
-                style={{ scrollSnapAlign: "start", minWidth: "280px", width: "min(380px, 85vw)" }}
-              >
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={item.image || "/placeholder.svg"}
-                    alt={item.name}
-                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                  />
+        {/* Show all featured items in a responsive grid */}
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+          {featuredItems.map((item) => (
+            <Card key={item.id} className="hover-lift overflow-hidden">
+              <div className="aspect-[4/3] overflow-hidden">
+                <img
+                  src={item.image || "/placeholder.svg"}
+                  alt={item.name}
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                />
+              </div>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-serif font-bold text-foreground mb-2">{item.name}</h3>
+                <p className="text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-lg font-bold text-accent">{item.price}</span>
+                  <Button className="bg-primary hover:bg-primary/90">Add to Order</Button>
                 </div>
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-serif font-bold text-foreground mb-2">{item.name}</h3>
-                  <p className="text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-accent">{item.price}</span>
-                    <Button className="bg-primary hover:bg-primary/90">Add to Order</Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="hidden md:block">
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute left-0 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm"
-              onClick={() => scrollByAmount("prev")}
-              aria-label="Previous"
-            >
-              ‹
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute right-0 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm"
-              onClick={() => scrollByAmount("next")}
-              aria-label="Next"
-            >
-              ›
-            </Button>
-          </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     </section>
