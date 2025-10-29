@@ -1,7 +1,9 @@
 ﻿"use client"
 
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 const featuredItems = [
   {
@@ -28,6 +30,34 @@ const featuredItems = [
 ]
 
 export function FeaturedSection() {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isHovering, setIsHovering] = useState(false)
+
+  // Auto-play when hovering
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+
+    if (isHovering) {
+      interval = setInterval(() => {
+        setCurrentIndex((prev) => (prev === featuredItems.length - 1 ? 0 : prev + 1))
+      }, 2000) // Change every 2 seconds
+    }
+
+    return () => {
+      if (interval) clearInterval(interval)
+    }
+  }, [isHovering])
+
+  const handlePrevious = () => {
+    setCurrentIndex((prev) => (prev === 0 ? featuredItems.length - 1 : prev - 1))
+  }
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === featuredItems.length - 1 ? 0 : prev + 1))
+  }
+
+  const currentItem = featuredItems[currentIndex]
+
   return (
     <section className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -41,27 +71,64 @@ export function FeaturedSection() {
           </p>
         </div>
 
-        {/* Show all featured items in a responsive grid */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-          {featuredItems.map((item) => (
-            <Card key={item.id} className="hover-lift overflow-hidden">
-              <div className="aspect-[4/3] overflow-hidden">
-                <img
-                  src={item.image || "/placeholder.svg"}
-                  alt={item.name}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+        {/* Carousel - One image at a time with auto-play on hover */}
+        <div 
+          className="max-w-5xl mx-auto"
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+        >
+          <Card className="hover-lift overflow-hidden relative">
+            <div className="aspect-[16/5] overflow-hidden relative">
+              <img
+                src={currentItem.image || "/placeholder.svg"}
+                alt={currentItem.name}
+                className="w-full h-full object-cover transition-opacity duration-500"
+              />
+            </div>
+            <CardContent className="p-6">
+              <h3 className="text-xl font-serif font-bold text-foreground mb-2">{currentItem.name}</h3>
+              <p className="text-muted-foreground leading-relaxed">{currentItem.description}</p>
+            </CardContent>
+          </Card>
+
+          {/* Navigation Controls */}
+          <div className="flex items-center justify-center gap-4 mt-6">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handlePrevious}
+              className="rounded-full w-10 h-10 hover:bg-primary hover:text-primary-foreground"
+              aria-label="Previous item"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            
+            {/* Dot indicators */}
+            <div className="flex gap-2">
+              {featuredItems.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentIndex(index)}
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentIndex 
+                      ? "bg-primary w-8" 
+                      : "bg-muted-foreground/30 w-2.5 hover:bg-muted-foreground/50"
+                  }`}
+                  aria-label={`Go to item ${index + 1}`}
                 />
-              </div>
-              <CardContent className="p-6">
-                <h3 className="text-xl font-serif font-bold text-foreground mb-2">{item.name}</h3>
-                <p className="text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-bold text-accent">{item.price}</span>
-                  <Button className="bg-primary hover:bg-primary/90">Add to Order</Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+              ))}
+            </div>
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleNext}
+              className="rounded-full w-10 h-10 hover:bg-primary hover:text-primary-foreground"
+              aria-label="Next item"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </div>
     </section>
