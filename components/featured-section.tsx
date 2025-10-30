@@ -1,134 +1,119 @@
 ﻿"use client"
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { ShoppingCart } from "lucide-react"
+import { useCart } from "@/components/cart-provider"
+import { toast } from "@/hooks/use-toast"
 
-const featuredItems = [
+const popularItems = [
   {
     id: 1,
-    name: "Artisan Sourdough",
-    description: "Our signature sourdough with a perfect crust and tangy flavor",
-    image: "/artisan-sourdough-bread-with-golden-crust.jpg",
-    price: "₹280.00",
+    name: "Chocolate Cake",
+    description: "Rich and moist chocolate layer cake with creamy frosting",
+    price: "₹850.00",
+    priceNumber: 850,
+    image: "/chocolate-layer-cake-with-ganache.jpg",
   },
   {
     id: 2,
-    name: "French Croissants",
+    name: "Fresh Croissant",
     description: "Buttery, flaky croissants baked fresh every morning",
-    image: "/golden-french-croissants-on-wooden-board.jpg",
     price: "₹260.00",
+    priceNumber: 260,
+    image: "/golden-french-croissants-on-wooden-board.jpg",
   },
   {
     id: 3,
-    name: "Chocolate Éclairs",
-    description: "Classic éclairs filled with vanilla cream and chocolate glaze",
-    image: "/chocolate-eclairs-with-glossy-chocolate-glaze.jpg",
+    name: "Red Velvet Cake",
+    description: "Classic red velvet cake with cream cheese frosting",
+    price: "₹180.00",
+    priceNumber: 180,
+    image: "/red-velvet-cake.png",
+  },
+  {
+    id: 4,
+    name: "Cinnamon Roll",
+    description: "Soft and fluffy cinnamon rolls with cream cheese glaze",
+    price: "₹160.00",
+    priceNumber: 160,
+    image: "/cinnamon-roll-cream-cheese-glaze.jpg",
+  },
+  {
+    id: 5,
+    name: "Artisan Sourdough",
+    description: "Handcrafted sourdough with perfect crust and tangy flavor",
+    price: "₹580.00",
+    priceNumber: 580,
+    image: "/artisan-sourdough-bread-with-golden-crust.jpg",
+  },
+  {
+    id: 6,
+    name: "Chocolate Éclair",
+    description: "Classic éclair filled with vanilla cream and chocolate glaze",
     price: "₹380.00",
+    priceNumber: 380,
+    image: "/chocolate-eclairs-with-glossy-chocolate-glaze.jpg",
   },
 ]
 
 export function FeaturedSection() {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isHovering, setIsHovering] = useState(false)
+  const { addItem } = useCart()
 
-  // Auto-play when hovering
-  useEffect(() => {
-    let interval: NodeJS.Timeout
-
-    if (isHovering) {
-      interval = setInterval(() => {
-        setCurrentIndex((prev) => (prev === featuredItems.length - 1 ? 0 : prev + 1))
-      }, 2000) // Change every 2 seconds
-    }
-
-    return () => {
-      if (interval) clearInterval(interval)
-    }
-  }, [isHovering])
-
-  const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? featuredItems.length - 1 : prev - 1))
+  const handleAddToCart = (item: typeof popularItems[0]) => {
+    addItem({
+      id: item.id,
+      name: item.name,
+      price: item.priceNumber,
+      image: item.image,
+    })
+    
+    toast({
+      title: "Added to cart!",
+      description: `${item.name} has been added to your cart.`,
+      duration: 3000,
+    })
   }
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === featuredItems.length - 1 ? 0 : prev + 1))
-  }
-
-  const currentItem = featuredItems[currentIndex]
-
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4 text-balance">
-            Today's Featured Delights
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+            Popular Items
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto text-balance">
-            Discover our daily selection of handcrafted favorites, made with the finest ingredients and traditional
-            techniques.
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            Our customers' favorites - handcrafted daily with the finest ingredients
           </p>
         </div>
 
-        {/* Carousel - One image at a time with auto-play on hover */}
-        <div 
-          className="max-w-5xl mx-auto"
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
-        >
-          <Card className="hover-lift overflow-hidden relative">
-            <div className="aspect-[16/5] overflow-hidden relative">
-              <img
-                src={currentItem.image || "/placeholder.svg"}
-                alt={currentItem.name}
-                className="w-full h-full object-cover transition-opacity duration-500"
-              />
-            </div>
-            <CardContent className="p-6">
-              <h3 className="text-xl font-serif font-bold text-foreground mb-2">{currentItem.name}</h3>
-              <p className="text-muted-foreground leading-relaxed">{currentItem.description}</p>
-            </CardContent>
-          </Card>
-
-          {/* Navigation Controls */}
-          <div className="flex items-center justify-center gap-4 mt-6">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handlePrevious}
-              className="rounded-full w-10 h-10 hover:bg-primary hover:text-primary-foreground"
-              aria-label="Previous item"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            
-            {/* Dot indicators */}
-            <div className="flex gap-2">
-              {featuredItems.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={`h-2.5 rounded-full transition-all duration-300 ${
-                    index === currentIndex 
-                      ? "bg-primary w-8" 
-                      : "bg-muted-foreground/30 w-2.5 hover:bg-muted-foreground/50"
-                  }`}
-                  aria-label={`Go to item ${index + 1}`}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {popularItems.map((item) => (
+            <Card key={item.id} className="overflow-hidden hover:shadow-xl transition-shadow duration-300 group">
+              <div className="aspect-[4/3] overflow-hidden">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
-              ))}
-            </div>
-
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={handleNext}
-              className="rounded-full w-10 h-10 hover:bg-primary hover:text-primary-foreground"
-              aria-label="Next item"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
+              </div>
+              <CardContent className="p-6">
+                <h3 className="text-xl font-bold text-foreground mb-2">{item.name}</h3>
+                <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
+                  {item.description}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-bold text-primary">{item.price}</span>
+                  <Button
+                    size="icon"
+                    className="rounded-full bg-primary hover:bg-primary/90 text-white"
+                    onClick={() => handleAddToCart(item)}
+                  >
+                    <ShoppingCart className="h-5 w-5" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     </section>

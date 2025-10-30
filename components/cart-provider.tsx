@@ -23,26 +23,35 @@ const STORAGE_KEY = "cart.items.v1"
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
+  const [isHydrated, setIsHydrated] = useState(false)
 
-  // load from localStorage
+  // Load from localStorage on mount (client-side only)
   useEffect(() => {
     try {
-      const raw = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null
+      const raw = localStorage.getItem(STORAGE_KEY)
       if (raw) {
         const parsed = JSON.parse(raw) as CartItem[]
-        if (Array.isArray(parsed)) setItems(parsed)
+        if (Array.isArray(parsed)) {
+          setItems(parsed)
+        }
       }
-    } catch {}
+    } catch (error) {
+      console.error("Failed to load cart from localStorage:", error)
+    }
+    // Mark as hydrated after loading
+    setIsHydrated(true)
   }, [])
 
-  // persist
+  // Save to localStorage whenever items change (only after hydration)
   useEffect(() => {
+    if (!isHydrated) return // Don't save until we've loaded from localStorage
+    
     try {
-      if (typeof window !== "undefined") {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
-      }
-    } catch {}
-  }, [items])
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+    } catch (error) {
+      console.error("Failed to save cart to localStorage:", error)
+    }
+  }, [items, isHydrated])
 
   const api = useMemo<CartContextType>(() => ({
     items,
@@ -57,14 +66,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         return [...prev, { ...item, quantity: qty }]
       })
     },
-    removeItem: (id) => setItems((prev) => prev.filter((p) => p.id !== id)),
-    updateQuantity: (id, qty) =>
+    removeItem: (id) => {
+      setItems((prev) => prev.filter((p) => p.id !== id))
+    },
+    updateQuantity: (id, qty) => {
       setItems((prev) =>
         prev
           .map((p) => (p.id === id ? { ...p, quantity: qty } : p))
           .filter((p) => p.quantity > 0),
-      ),
-    clear: () => setItems([]),
+      )
+    },
+    clear: () => {
+      setItems([])
+    },
   }), [items])
 
   return <CartContext.Provider value={api}>{children}</CartContext.Provider>
