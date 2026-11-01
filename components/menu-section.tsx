@@ -1,460 +1,609 @@
-﻿"use client"
+"use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { DietaryMark } from "@/components/dietary-mark"
+import { ProductModal, ProductData } from "@/components/product-modal"
 import { useCart } from "@/components/cart-provider"
 import { toast } from "@/hooks/use-toast"
-import { ToastAction } from "@/components/ui/toast"
-import { useRouter } from "next/navigation"
+import {
+  Search,
+  SlidersHorizontal,
+  Plus,
+  Sparkles,
+  ShoppingBag,
+  Check,
+} from "lucide-react"
 
-const categories = ["All", "Cakes", "Pastries", "Cookies", "Breads"]
+const CATEGORIES = [
+  "All",
+  "Cakes & Pastries",
+  "Cheesecakes & Slices",
+  "Savory & Patties",
+  "Viennoiserie & Bakes",
+  "Artisanal Breads",
+  "Cookies & Biscuits",
+  "Festive Hampers",
+]
 
-const menuItems = [
+export const ALL_MENU_ITEMS: ProductData[] = [
+  // --- Cakes & Pastries ---
   {
-    id: 1,
-    name: "Classic Baguette",
-    category: "Breads",
-    description: "Traditional French baguette with crispy crust",
-    price: "₹360.00",
-    image: "/french-baguette-bread-golden-crust.jpg",
-  },
-  {
-    id: 5,
-    name: "Multigrain Loaf",
-    category: "Breads",
-    description: "Hearty multigrain bread with seeds",
-    price: "₹440.00",
-    image: "/multigrain-bread-loaf-with-seeds.jpg",
-  },
-  {
-    id: 22,
-    name: "Sourdough Bread",
-    category: "Breads",
-    description: "Artisan sourdough with tangy flavor and chewy texture",
-    price: "₹580.00",
-    image: "/artisan-sourdough-bread-rustic.jpg",
-  },
-  {
-    id: 23,
-    name: "Whole Wheat Bread",
-    category: "Breads",
-    description: "Nutritious whole wheat bread with honey",
-    price: "₹460.00",
-    image: "/whole-wheat-bread-honey-glazed.jpg",
-  },
-  {
-    id: 24,
-    name: "Focaccia Bread",
-    category: "Breads",
-    description: "Italian focaccia with rosemary and olive oil",
-    price: "₹420.00",
-    image: "/focaccia-bread-rosemary-olive-oil.jpg",
-  },
-  {
-    id: 25,
-    name: "Ciabatta Bread",
-    category: "Breads",
-    description: "Traditional Italian ciabatta with airy texture",
-    price: "₹420.00",
-    image: "/ciabatta-bread-italian-style.jpg",
-  },
-  {
-    id: 26,
-    name: "Rye Bread",
-    category: "Breads",
-    description: "Dense rye bread with caraway seeds",
-    price: "₹500.00",
-    image: "/rye-bread-caraway-seeds.jpg",
-  },
-  {
-    id: 2,
-    name: "Almond Croissant",
-    category: "Pastries",
-    description: "Buttery croissant filled with almond cream",
-    price: "₹340.00",
-    image: "/almond-croissant-with-sliced-almonds.jpg",
-  },
-  {
-    id: 6,
-    name: "Fruit Tart",
-    category: "Pastries",
-    description: "Fresh seasonal fruit on pastry cream",
-    price: "₹440.00",
-    image: "/fresh-fruit-tart-with-berries.jpg",
-  },
-  {
-    id: 27,
-    name: "Pain au Chocolat",
-    category: "Pastries",
-    description: "Flaky pastry with dark chocolate filling",
-    price: "₹300.00",
-    image: "/pain-au-chocolat-flaky-pastry.jpg",
-  },
-  {
-    id: 28,
-    name: "Danish Pastry",
-    category: "Pastries",
-    description: "Buttery Danish with cream cheese and berries",
-    price: "₹360.00",
-    image: "/danish-pastry-cream-cheese-berries.jpg",
-  },
-  {
-    id: 29,
-    name: "Ã‰clair",
-    category: "Pastries",
-    description: "Choux pastry filled with vanilla cream and chocolate glaze",
-    price: "₹380.00",
-    image: "/chocolate-eclair-vanilla-cream.jpg",
-  },
-  {
-    id: 30,
-    name: "Profiterole",
-    category: "Pastries",
-    description: "Light choux pastry with whipped cream and chocolate sauce",
-    price: "₹260.00",
-    image: "/profiteroles-whipped-cream-chocolate.jpg",
-  },
-  {
-    id: 31,
-    name: "Apple Turnover",
-    category: "Pastries",
-    description: "Flaky pastry with spiced apple filling",
-    price: "₹316.00",
-    image: "/apple-turnover-flaky-pastry.jpg",
-  },
-  {
-    id: 32,
-    name: "Cinnamon Roll",
-    category: "Pastries",
-    description: "Soft roll with cinnamon sugar and cream cheese glaze",
-    price: "₹340.00",
-    image: "/cinnamon-roll-cream-cheese-glaze.jpg",
-  },
-  {
-    id: 4,
-    name: "Oatmeal Cookies",
-    category: "Cookies",
-    description: "Chewy oatmeal cookies with raisins",
-    price: "₹220.00",
-    image: "/oatmeal-raisin-cookies-on-plate.jpg",
-  },
-  {
-    id: 33,
-    name: "Chocolate Chip Cookies",
-    category: "Cookies",
-    description: "Classic cookies with premium chocolate chips",
-    price: "₹200.00",
-    image: "/chocolate-chip-cookies-fresh-baked.jpg",
-  },
-  {
-    id: 34,
-    name: "Sugar Cookies",
-    category: "Cookies",
-    description: "Soft sugar cookies with vanilla icing",
-    price: "₹180.00",
-    image: "/sugar-cookies-vanilla-icing.jpg",
-  },
-  {
-    id: 35,
-    name: "Snickerdoodles",
-    category: "Cookies",
-    description: "Cinnamon sugar cookies with soft centers",
-    price: "₹220.00",
-    image: "/snickerdoodle-cookies-cinnamon-sugar.jpg",
-  },
-  {
-    id: 36,
-    name: "Peanut Butter Cookies",
-    category: "Cookies",
-    description: "Rich peanut butter cookies with crosshatch pattern",
-    price: "₹236.00",
-    image: "/peanut-butter-cookies-crosshatch.jpg",
-  },
-  {
-    id: 37,
-    name: "Double Chocolate Cookies",
-    category: "Cookies",
-    description: "Fudgy chocolate cookies with chocolate chunks",
-    price: "₹260.00",
-    image: "/double-chocolate-cookies-fudgy.jpg",
-  },
-  {
-    id: 38,
-    name: "Gingerbread Cookies",
-    category: "Cookies",
-    description: "Spiced gingerbread cookies with royal icing",
-    price: "₹280.00",
-    image: "/gingerbread-cookies-royal-icing.jpg",
-  },
-  {
-    id: 39,
-    name: "Shortbread Cookies",
-    category: "Cookies",
-    description: "Buttery Scottish shortbread cookies",
-    price: "₹236.00",
-    image: "/shortbread-cookies-buttery-scottish.jpg",
-  },
-  {
-    id: 3,
-    name: "Chocolate Cake",
-    category: "Cakes",
-    description: "Rich chocolate cake with ganache frosting",
-    price: "₹240.99",
+    id: 101,
+    name: "Classic Chocolate Truffle Cake",
+    category: "Cakes & Pastries",
+    description: "Layers of decadent Dutch chocolate sponge coated in silky Belgian dark ganache.",
+    price: 650,
     image: "/chocolate-layer-cake-with-ganache.jpg",
+    isEggless: true,
+    tags: ["Bestseller", "Eggless"],
   },
   {
-    id: 7,
-    name: "Red Velvet Cake",
-    category: "Cakes",
-    description: "Classic red velvet with cream cheese frosting",
-    price: "₹260.99",
-    image: "/red-velvet-cake.png",
-  },
-  {
-    id: 8,
-    name: "Vanilla Bean Cake",
-    category: "Cakes",
-    description: "Moist vanilla cake with Madagascar vanilla bean buttercream",
-    price: "₹230.99",
-    image: "/vanilla-bean-cake-with-buttercream-frosting.jpg",
-  },
-  {
-    id: 9,
-    name: "Lemon Drizzle Cake",
-    category: "Cakes",
-    description: "Zesty lemon cake with tangy lemon glaze",
-    price: "₹220.99",
-    image: "/lemon-drizzle-cake-with-glaze.jpg",
-  },
-  {
-    id: 10,
-    name: "Carrot Cake",
-    category: "Cakes",
-    description: "Spiced carrot cake with walnuts and cream cheese frosting",
-    price: "₹25.99",
-    image: "/carrot-cake-with-cream-cheese-frosting-and-walnuts.jpg",
-  },
-  {
-    id: 11,
-    name: "Black Forest Cake",
-    category: "Cakes",
-    description: "Chocolate sponge with cherries and whipped cream",
-    price: "₹28.99",
-    image: "/black-forest-cake-with-cherries-and-cream.jpg",
-  },
-  {
-    id: 12,
-    name: "Strawberry Shortcake",
-    category: "Cakes",
-    description: "Light sponge with fresh strawberries and whipped cream",
-    price: "₹24.99",
-    image: "/strawberry-shortcake-with-fresh-berries.jpg",
-  },
-  {
-    id: 13,
-    name: "Tiramisu Cake",
-    category: "Cakes",
-    description: "Coffee-soaked layers with mascarpone and cocoa",
-    price: "₹27.99",
-    image: "/tiramisu-cake-with-mascarpone-and-cocoa.jpg",
-  },
-  {
-    id: 14,
-    name: "Coconut Cake",
-    category: "Cakes",
-    description: "Tropical coconut cake with coconut cream frosting",
-    price: "₹25.99",
-    image: "/coconut-cake-with-coconut-flakes-and-cream-frostin.jpg",
-  },
-  {
-    id: 15,
-    name: "Funfetti Birthday Cake",
-    category: "Cakes",
-    description: "Colorful sprinkle cake with vanilla buttercream",
-    price: "₹23.99",
-    image: "/funfetti-birthday-cake-with-colorful-sprinkles.jpg",
-  },
-  {
-    id: 16,
-    name: "German Chocolate Cake",
-    category: "Cakes",
-    description: "Rich chocolate cake with coconut pecan frosting",
-    price: "₹26.99",
-    image: "/german-chocolate-cake-with-coconut-pecan-frosting.jpg",
-  },
-  {
-    id: 17,
-    name: "Cheesecake",
-    category: "Cakes",
-    description: "New York style cheesecake with graham cracker crust",
-    price: "₹21.99",
-    image: "/new-york-cheesecake-with-graham-cracker-crust.jpg",
-  },
-  {
-    id: 18,
-    name: "Chocolate Raspberry Cake",
-    category: "Cakes",
-    description: "Decadent chocolate cake with fresh raspberry filling",
-    price: "₹29.99",
-    image: "/chocolate-raspberry-cake-with-fresh-berries.jpg",
-  },
-  {
-    id: 19,
-    name: "Banana Cake",
-    category: "Cakes",
-    description: "Moist banana cake with cinnamon cream cheese frosting",
-    price: "₹240.99",
-    image: "/banana-cake-with-cinnamon-cream-cheese-frosting.jpg",
-  },
-  {
-    id: 20,
-    name: "Opera Cake",
-    category: "Cakes",
-    description: "French almond sponge with chocolate ganache and gold leaf",
-    price: "₹32.99",
-    image: "/opera-cake-with-chocolate-ganache-and-gold-leaf.jpg",
-  },
-  {
-    id: 21,
-    name: "Pineapple Upside Down Cake",
-    category: "Cakes",
-    description: "Caramelized pineapple with tender vanilla cake",
-    price: "₹23.99",
+    id: 102,
+    name: "Tropical Pineapple Fresh Cream Cake",
+    category: "Cakes & Pastries",
+    description: "Soft vanilla sponge infused with fresh pineapple compote and airy whipped cream.",
+    price: 550,
     image: "/pineapple-upside-down-cake-with-caramelized-fruit.jpg",
+    isEggless: true,
+    tags: ["100% Eggless", "Classic"],
+  },
+  {
+    id: 103,
+    name: "Royal Red Velvet Cake",
+    category: "Cakes & Pastries",
+    description: "Velvety crimson sponge layered with luscious Philadelphia cream cheese frosting.",
+    price: 750,
+    image: "/red-velvet-cake.png",
+    isEggless: true,
+    tags: ["Signature"],
+  },
+  {
+    id: 104,
+    name: "Black Forest Gateau",
+    category: "Cakes & Pastries",
+    description: "Traditional German chocolate sponge layered with tart cherry compote and Swiss cream.",
+    price: 600,
+    image: "/black-forest-cake-with-cherries-and-cream.jpg",
+    isEggless: true,
+    tags: ["Customer Favorite"],
+  },
+  {
+    id: 105,
+    name: "Fresh Seasonal Fruit Gateau",
+    category: "Cakes & Pastries",
+    description: "Vanilla sponge decorated lavishly with kiwi, dragon fruit, blueberries, and kiwi.",
+    price: 700,
+    image: "/fresh-fruit-tart-with-berries.jpg",
+    isEggless: true,
+    tags: ["Fresh Daily"],
+  },
+  {
+    id: 106,
+    name: "Opera Dark Coffee Cake",
+    category: "Cakes & Pastries",
+    description: "French almond joconde sponge soaked in espresso syrup, layered with dark ganache.",
+    price: 850,
+    image: "/opera-cake-with-chocolate-ganache-and-gold-leaf.jpg",
+    isEggless: false,
+    tags: ["Contains Egg", "French Pâtisserie"],
+  },
+
+  // --- Cheesecakes & Slices ---
+  {
+    id: 201,
+    name: "Nocturne Dark Chocolate Cheesecake",
+    category: "Cheesecakes & Slices",
+    description: "Inspired by Defence Bakery's iconic Nocturne — intensely rich Belgian cocoa cheesecake with chocolate crumb crust.",
+    price: 850,
+    image: "/new-york-cheesecake-with-graham-cracker-crust.jpg",
+    isEggless: false,
+    tags: ["Defence Bakery Signature"],
+  },
+  {
+    id: 202,
+    name: "Lotus Biscoff Baked Cheesecake",
+    category: "Cheesecakes & Slices",
+    description: "Creamy baked New York style cheesecake crowned with spiced speculoos spread and biscuit crumble.",
+    price: 850,
+    image: "/new-york-cheesecake-with-graham-cracker-crust.jpg",
+    isEggless: true,
+    tags: ["Bestseller", "Eggless"],
+  },
+  {
+    id: 203,
+    name: "Blueberry Cold-Set Cheesecake Slice",
+    category: "Cheesecakes & Slices",
+    description: "Silky unbaked cheesecake infused with Greek yogurt and topped with wild Canadian blueberry glaze.",
+    price: 240,
+    image: "/new-york-cheesecake-with-graham-cracker-crust.jpg",
+    isEggless: true,
+    tags: ["Slice", "Eggless"],
+  },
+
+  // --- Savory & Patties (Defence Bakery Hallmark) ---
+  {
+    id: 301,
+    name: "Crispy Aloo Masala Puff Patty",
+    category: "Savory & Patties",
+    description: "Flaky golden puff pastry stuffed with spiced potato, peas, cumin, and coriander. Served piping hot.",
+    price: 65,
+    image: "/apple-turnover-flaky-pastry.jpg",
+    isEggless: true,
+    tags: ["Hot Bake", "Pure Veg"],
+  },
+  {
+    id: 302,
+    name: "Tandoori Paneer Tikka Puff Patty",
+    category: "Savory & Patties",
+    description: "Buttery puff pastry enveloping smoky cottage cheese cubes tossed in tandoori spices and mint.",
+    price: 85,
+    image: "/apple-turnover-flaky-pastry.jpg",
+    isEggless: true,
+    tags: ["Must Try", "Pure Veg"],
+  },
+  {
+    id: 303,
+    name: "Creamy Mushroom & Corn Puff",
+    category: "Savory & Patties",
+    description: "Sauteed button mushrooms and sweet corn in a velvety béchamel and herb reduction inside flaky pastry.",
+    price: 90,
+    image: "/apple-turnover-flaky-pastry.jpg",
+    isEggless: true,
+    tags: ["Chef Special", "Pure Veg"],
+  },
+  {
+    id: 304,
+    name: "Baked Chicken Keema Roll",
+    category: "Savory & Patties",
+    description: "Minced spiced chicken cooked with aromatic garam masala wrapped in soft golden brioche roll.",
+    price: 110,
+    image: "/pain-au-chocolat-flaky-pastry.jpg",
+    isEggless: false,
+    tags: ["Non-Veg", "Hot Snack"],
+  },
+  {
+    id: 305,
+    name: "Chicken Sausage Puff Roll",
+    category: "Savory & Patties",
+    description: "Classic English-style seasoned chicken sausage wrapped in crisp French puff pastry with mustard glaze.",
+    price: 110,
+    image: "/apple-turnover-flaky-pastry.jpg",
+    isEggless: false,
+    tags: ["Non-Veg", "Classic"],
+  },
+
+  // --- Viennoiserie & Bakes ---
+  {
+    id: 401,
+    name: "French Butter Croissant",
+    category: "Viennoiserie & Bakes",
+    description: "Laminated with 100% pure butter with over 27 delicate layers for that authentic Parisian crunch.",
+    price: 160,
+    image: "/golden-french-croissants-on-wooden-board.jpg",
+    isEggless: true,
+    tags: ["100% Real Butter", "Fresh 5 AM"],
+  },
+  {
+    id: 402,
+    name: "Almond Frangipane Croissant",
+    category: "Viennoiserie & Bakes",
+    description: "Twice-baked butter croissant loaded with rich almond cream and topped with toasted sliced almonds.",
+    price: 220,
+    image: "/almond-croissant-with-sliced-almonds.jpg",
+    isEggless: true,
+    tags: ["Artisan"],
+  },
+  {
+    id: 403,
+    name: "Dark Chocolate Pain au Chocolat",
+    category: "Viennoiserie & Bakes",
+    description: "Flaky viennoiserie pastry folded around two batons of 55% Belgian dark chocolate.",
+    price: 180,
+    image: "/pain-au-chocolat-flaky-pastry.jpg",
+    isEggless: true,
+    tags: ["Eggless"],
+  },
+  {
+    id: 404,
+    name: "Glazed Cinnamon Swirl Roll",
+    category: "Viennoiserie & Bakes",
+    description: "Tender brioche dough swirled with aromatic Ceylon cinnamon and topped with cream cheese drizzle.",
+    price: 170,
+    image: "/cinnamon-roll-cream-cheese-glaze.jpg",
+    isEggless: true,
+    tags: ["Eggless"],
+  },
+  {
+    id: 405,
+    name: "Mixed Berry Danish Pastry",
+    category: "Viennoiserie & Bakes",
+    description: "Crisp puff dough filled with smooth vanilla custard cream and raspberries.",
+    price: 190,
+    image: "/danish-pastry-cream-cheese-berries.jpg",
+    isEggless: true,
+    tags: ["Eggless"],
+  },
+
+  // --- Artisanal Breads ---
+  {
+    id: 501,
+    name: "24-Hour Fermented Sourdough Boule",
+    category: "Artisanal Breads",
+    description: "Naturally leavened sourdough with an open airy crumb, blistered crust, and pleasant mild tang.",
+    price: 240,
+    image: "/artisan-sourdough-bread-with-golden-crust.jpg",
+    isEggless: true,
+    tags: ["Wild Yeast", "No Commercial Yeast"],
+  },
+  {
+    id: 502,
+    name: "Rosemary & Extra Virgin Olive Focaccia",
+    category: "Artisanal Breads",
+    description: "Pillowy Italian flatbread dimpled with kalamata olives, fresh garden rosemary, and sea salt flakes.",
+    price: 220,
+    image: "/focaccia-bread-rosemary-olive-oil.jpg",
+    isEggless: true,
+    tags: ["Italian Classic"],
+  },
+  {
+    id: 503,
+    name: "Traditional French Baguette",
+    category: "Artisanal Breads",
+    description: "Authentic long French loaf with a crisp golden exterior and chewy interior.",
+    price: 140,
+    image: "/french-baguette-bread-golden-crust.jpg",
+    isEggless: true,
+    tags: ["Parisian Classic"],
+  },
+  {
+    id: 504,
+    name: "Hearty 7-Grain & Seed Loaf",
+    category: "Artisanal Breads",
+    description: "Loaded with flax seeds, sunflower kernels, sesame, rolled oats, and whole wheat stoneground flour.",
+    price: 180,
+    image: "/multigrain-bread-loaf-with-seeds.jpg",
+    isEggless: true,
+    tags: ["High Fiber"],
+  },
+  {
+    id: 505,
+    name: "Artisan Ciabatta Bread",
+    category: "Artisanal Breads",
+    description: "Light Italian slipper bread with large irregular air pockets, ideal for panini and bruschetta.",
+    price: 160,
+    image: "/ciabatta-bread-italian-style.jpg",
+    isEggless: true,
+    tags: ["Eggless"],
+  },
+
+  // --- Cookies & Biscuits ---
+  {
+    id: 601,
+    name: "Desi Ghee Nan Khatai Jar (300g)",
+    category: "Cookies & Biscuits",
+    description: "Traditional Indian shortbread biscuit made with pure desi cow ghee, cardamom, and pistachio shavings.",
+    price: 260,
+    image: "/shortbread-cookies-buttery-scottish.jpg",
+    isEggless: true,
+    tags: ["Desi Ghee", "Festive Favorite"],
+  },
+  {
+    id: 602,
+    name: "Sweet & Salty Jeera Biscuits (300g)",
+    category: "Cookies & Biscuits",
+    description: "The quintessential Indian tea-time cookie flavored with roasted cumin seeds and fine rock salt.",
+    price: 220,
+    image: "/oatmeal-raisin-cookies-on-plate.jpg",
+    isEggless: true,
+    tags: ["Tea Time Essential"],
+  },
+  {
+    id: 603,
+    name: "Belgian Choco Chunk Cookies Jar (300g)",
+    category: "Cookies & Biscuits",
+    description: "Thick, chewy cookies studded generously with 54% dark chocolate chunks and sea salt.",
+    price: 280,
+    image: "/chocolate-chip-cookies-fresh-baked.jpg",
+    isEggless: true,
+    tags: ["Bestseller"],
+  },
+  {
+    id: 604,
+    name: "Toasted Coconut Macaroon Cookies (250g)",
+    category: "Cookies & Biscuits",
+    description: "Chewy shredded coconut cookies dipped lightly in dark cocoa chocolate.",
+    price: 260,
+    image: "/sugar-cookies-vanilla-icing.jpg",
+    isEggless: true,
+    tags: ["Eggless"],
+  },
+
+  // --- Festive Hampers ---
+  {
+    id: 701,
+    name: "Celebration Artisanal Gift Hamper",
+    category: "Festive Hampers",
+    description: "A luxury keepsake box containing Desi Ghee Nan Khatai Jar, Belgian Dark Truffles, Almond Biscotti, and Sourdough Crisps.",
+    price: 1450,
+    image: "/bakery-team-working.jpg",
+    isEggless: true,
+    tags: ["Luxury Packaging", "Perfect Gift"],
+  },
+  {
+    id: 702,
+    name: "Grand Patisserie Treat Box",
+    category: "Festive Hampers",
+    description: "Curated gift set with 2 Croissants, 2 Eclairs, Assorted Cookie Jar, and Handcrafted Belgian Chocolate Bark.",
+    price: 1200,
+    image: "/morning-coffee-pastry-setup.jpg",
+    isEggless: true,
+    tags: ["Gift Box"],
   },
 ]
 
 export function MenuSection() {
   const [selectedCategory, setSelectedCategory] = useState("All")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [egglessOnly, setEgglessOnly] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   const { addItem } = useCart()
-  const router = useRouter()
-  const [quantities, setQuantities] = useState<Record<number, number>>({})
 
-  const getQty = (id: number) => (quantities[id] ?? 1)
-  const setQty = (id: number, value: number) =>
-    setQuantities((prev) => ({ ...prev, [id]: Math.max(1, Math.min(99, Math.floor(value) || 1)) }))
+  // Filter items
+  const filteredItems = useMemo(() => {
+    return ALL_MENU_ITEMS.filter((item) => {
+      // Category match
+      if (selectedCategory !== "All" && item.category !== selectedCategory) {
+        return false
+      }
+      // Eggless filter
+      if (egglessOnly && !item.isEggless) {
+        return false
+      }
+      // Search query
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase()
+        const nameMatch = item.name.toLowerCase().includes(q)
+        const descMatch = item.description.toLowerCase().includes(q)
+        const catMatch = item.category.toLowerCase().includes(q)
+        if (!nameMatch && !descMatch && !catMatch) return false
+      }
+      return true
+    })
+  }, [selectedCategory, egglessOnly, searchQuery])
 
-  const filteredItems =
-    selectedCategory === "All" ? menuItems : menuItems.filter((item) => item.category === selectedCategory)
+  const openCustomizeModal = (item: ProductData) => {
+    setSelectedProduct(item)
+    setIsModalOpen(true)
+  }
+
+  const handleQuickAdd = (item: ProductData) => {
+    // If it's a cake with weight options, open modal for better experience
+    if (item.category.includes("Cake")) {
+      openCustomizeModal(item)
+      return
+    }
+
+    addItem({
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      weight: item.category.includes("Savory") ? "Single Piece" : "Standard",
+      isEggless: item.isEggless,
+    })
+
+    toast({
+      title: "Added to Cart! 🥐",
+      description: `${item.name} added to your basket.`,
+      duration: 3000,
+    })
+  }
 
   return (
-    <section id="menu" className="py-20 bg-background">
+    <section id="menu" className="py-20 bg-background relative">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4 text-balance">
-            Our Artisan Menu
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <Badge variant="accent" className="mb-3 px-3 py-1">
+            Fresh From Our Ovens
+          </Badge>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-foreground mb-4">
+            Artisanal Bakery & Pâtisserie Menu
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto text-balance">
-            Every item is crafted with care using traditional methods and the finest ingredients sourced locally.
+          <p className="text-muted-foreground text-base md:text-lg">
+            Inspired by the timeless heritage of iconic Delhi-NCR bakeries like Defence Bakery. Baked with 100% pure dairy butter, zero preservatives, and passion.
           </p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={selectedCategory === category ? "default" : "outline"}
-              onClick={() => setSelectedCategory(category)}
-              className={
-                selectedCategory === category
-                  ? "bg-primary hover:bg-primary/90"
-                  : "border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-              }
-            >
-              {category}
-            </Button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredItems.map((item) => (
-            <Card key={item.id} className="hover-lift overflow-hidden">
-              <div className="aspect-[4/3] overflow-hidden">
-                <img
-                  src={item.image || "/placeholder.svg"}
-                  alt={item.name}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                />
-              </div>
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-serif font-bold text-foreground">{item.name}</h3>
-                  <span className="text-lg font-bold text-accent">{item.price}</span>
-                </div>
-                <p className="text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
-                {/* Quantity selector */}
-                <div className="mb-4 flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setQty(item.id, getQty(item.id) - 1)}
-                    aria-label={`Decrease ${item.name} quantity`}
-                  >
-                    -
-                  </Button>
-                  <Input
-                    type="number"
-                    inputMode="numeric"
-                    min={1}
-                    max={99}
-                    value={getQty(item.id)}
-                    onChange={(e) => setQty(item.id, Number(e.target.value))}
-                    className="w-16 text-center"
-                    aria-label={`${item.name} quantity`}
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setQty(item.id, getQty(item.id) + 1)}
-                    aria-label={`Increase ${item.name} quantity`}
-                  >
-                    +
-                  </Button>
-                </div>
-
-                <Button
-                  className="w-full bg-primary hover:bg-primary/90"
-                  onClick={() => {
-                    const priceNumber = parseFloat(String(item.price).replace(/[^\d.]/g, "")) || 0
-                    const qty = getQty(item.id)
-                    addItem(
-                      {
-                        id: item.id,
-                        name: item.name,
-                        price: priceNumber,
-                        image: item.image,
-                      },
-                      qty,
-                    )
-                    toast({
-                      title: "Added to order",
-                      description: `${qty} × ${item.name} added to your cart.`,
-                      action: (
-                        <ToastAction altText="View cart" onClick={() => router.push("/cart")}>
-                          View cart
-                        </ToastAction>
-                      ),
-                    })
-                    // reset to 1 after adding
-                    setQty(item.id, 1)
-                  }}
+        {/* Filter Controls Bar */}
+        <div className="bg-card border border-border rounded-2xl p-4 md:p-6 shadow-xs mb-10 max-w-7xl mx-auto space-y-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            {/* Search Box */}
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search cakes, patties, sourdough, cookies..."
+                className="pl-10 text-xs rounded-xl h-11"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground"
                 >
-                  Add to Order
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+                  Clear
+                </button>
+              )}
+            </div>
+
+            {/* Eggless Toggle Pill Button */}
+            <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+              <button
+                type="button"
+                onClick={() => setEgglessOnly((prev) => !prev)}
+                className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                  egglessOnly
+                    ? "bg-green-600 text-white border-green-700 shadow-md ring-2 ring-green-600/30"
+                    : "bg-muted/40 border-border text-foreground hover:bg-muted"
+                }`}
+              >
+                <div className="w-3.5 h-3.5 rounded-xs border border-white/60 bg-white flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-full bg-green-600" />
+                </div>
+                <span>100% Eggless / Pure Veg Only</span>
+                {egglessOnly && <Check className="h-3.5 w-3.5 ml-1" />}
+              </button>
+
+              <span className="text-xs text-muted-foreground hidden sm:inline">
+                Showing <strong>{filteredItems.length}</strong> items
+              </span>
+            </div>
+          </div>
+
+          {/* Category Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
+            {CATEGORIES.map((cat) => {
+              const active = selectedCategory === cat
+              return (
+                <button
+                  type="button"
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`text-xs px-4 py-2 rounded-full font-medium whitespace-nowrap transition-all cursor-pointer ${
+                    active
+                      ? "bg-primary text-white shadow-sm font-semibold"
+                      : "bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }`}
+                >
+                  {cat}
+                </button>
+              )
+            })}
+          </div>
         </div>
+
+        {/* Product Grid */}
+        {filteredItems.length === 0 ? (
+          <div className="text-center py-20 bg-muted/20 rounded-2xl border border-dashed border-border max-w-3xl mx-auto">
+            <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+            <h3 className="text-lg font-serif font-bold text-foreground">No bakery items found</h3>
+            <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+              We couldn't find items matching "{searchQuery}" under {selectedCategory}. Try resetting your filters.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-4 text-xs"
+              onClick={() => {
+                setSearchQuery("")
+                setSelectedCategory("All")
+                setEgglessOnly(false)
+              }}
+            >
+              Reset Filters
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {filteredItems.map((item) => (
+              <Card
+                key={item.id}
+                className="overflow-hidden border border-border bg-card shadow-2xs hover:shadow-xl transition-all duration-300 flex flex-col justify-between group rounded-2xl"
+              >
+                <div>
+                  {/* Image container */}
+                  <div
+                    onClick={() => openCustomizeModal(item)}
+                    className="relative aspect-[4/3] overflow-hidden bg-muted/30 cursor-pointer"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                    />
+
+                    {/* Dietary badge */}
+                    <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+                      <div className="bg-white/95 dark:bg-zinc-900/95 backdrop-blur-xs p-1 rounded-md shadow-xs">
+                        <DietaryMark isEggless={item.isEggless ?? true} size="sm" />
+                      </div>
+                      {item.tags?.[0] && (
+                        <Badge
+                          variant="secondary"
+                          className="text-[10px] bg-white/95 dark:bg-zinc-900/95 text-foreground backdrop-blur-xs shadow-xs"
+                        >
+                          {item.tags[0]}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  <CardContent className="p-5 space-y-2">
+                    <span className="text-[11px] font-semibold text-accent uppercase tracking-wider block">
+                      {item.category}
+                    </span>
+
+                    <h3
+                      onClick={() => openCustomizeModal(item)}
+                      className="text-base font-serif font-bold text-foreground group-hover:text-primary transition-colors cursor-pointer leading-snug line-clamp-1"
+                    >
+                      {item.name}
+                    </h3>
+
+                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      {item.description}
+                    </p>
+                  </CardContent>
+                </div>
+
+                {/* Bottom Price & Actions */}
+                <div className="p-5 pt-0 border-t border-border/50 mt-2 flex items-center justify-between gap-2">
+                  <div>
+                    <span className="text-[10px] text-muted-foreground block">Starting at</span>
+                    <span className="text-lg font-bold text-primary font-serif">
+                      ₹{item.price}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => openCustomizeModal(item)}
+                      className="text-xs h-9 px-3 border-primary/30 text-primary hover:bg-primary/5 rounded-xl font-medium"
+                    >
+                      Customise
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => handleQuickAdd(item)}
+                      className="bg-primary hover:bg-primary/90 text-white h-9 px-3 rounded-xl font-medium shadow-xs"
+                    >
+                      <Plus className="h-4 w-4 mr-0.5" />
+                      Add
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Global Product Customization Modal */}
+        <ProductModal
+          product={selectedProduct}
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+        />
       </div>
     </section>
   )
 }
-
-
-
-
-
